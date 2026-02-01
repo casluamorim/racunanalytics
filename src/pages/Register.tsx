@@ -7,35 +7,49 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useAuth } from '@/lib/auth';
 import { toast } from 'sonner';
-import { Eye, EyeOff, ArrowRight, Loader2 } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight, Loader2, UserPlus } from 'lucide-react';
 
-export default function Login() {
+export default function Register() {
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const { signIn } = useAuth();
+  const { signUp } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (password !== confirmPassword) {
+      toast.error('As senhas não coincidem.');
+      return;
+    }
+
+    if (password.length < 6) {
+      toast.error('A senha deve ter pelo menos 6 caracteres.');
+      return;
+    }
+
     setIsLoading(true);
 
-    const { error } = await signIn(email, password);
+    const { error } = await signUp(email, password, fullName);
 
     if (error) {
-      toast.error('Credenciais inválidas. Verifique seu e-mail e senha.');
+      toast.error('Erro ao criar conta. Tente novamente.');
+      console.error('Signup error:', error);
       setIsLoading(false);
       return;
     }
 
-    toast.success('Login realizado com sucesso!');
-    navigate('/dashboard');
+    toast.success('Conta criada! Verifique seu e-mail para confirmar.');
+    navigate('/login');
   };
 
   return (
     <div className="min-h-screen flex">
-      {/* Left side - Login form */}
+      {/* Left side - Register form */}
       <div className="flex-1 flex flex-col justify-center px-8 lg:px-16 xl:px-24">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -46,11 +60,24 @@ export default function Login() {
           <div className="mb-10">
             <Logo size="lg" />
             <p className="mt-4 text-muted-foreground">
-              Acesse sua conta para visualizar os relatórios de performance das suas campanhas.
+              Crie sua conta para acessar os relatórios de performance.
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <Label htmlFor="fullName">Nome completo</Label>
+              <Input
+                id="fullName"
+                type="text"
+                placeholder="Seu nome"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                required
+                className="h-12"
+              />
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="email">E-mail</Label>
               <Input
@@ -65,16 +92,7 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Senha</Label>
-                <Button
-                  variant="link"
-                  className="p-0 h-auto text-sm text-muted-foreground"
-                  type="button"
-                >
-                  Esqueceu a senha?
-                </Button>
-              </div>
+              <Label htmlFor="password">Senha</Label>
               <div className="relative">
                 <Input
                   id="password"
@@ -101,6 +119,19 @@ export default function Login() {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirmar senha</Label>
+              <Input
+                id="confirmPassword"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="h-12"
+              />
+            </div>
+
             <Button
               type="submit"
               className="w-full h-12 text-base font-medium"
@@ -109,21 +140,21 @@ export default function Login() {
               {isLoading ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Entrando...
+                  Criando conta...
                 </>
               ) : (
                 <>
-                  Entrar
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Criar conta
                 </>
               )}
             </Button>
           </form>
 
           <p className="mt-6 text-center text-sm text-muted-foreground">
-            Não tem uma conta?{' '}
-            <Link to="/register" className="text-primary hover:underline font-medium">
-              Criar conta
+            Já tem uma conta?{' '}
+            <Link to="/login" className="text-primary hover:underline font-medium">
+              Faça login
             </Link>
           </p>
 
@@ -138,7 +169,6 @@ export default function Login() {
       <div className="hidden lg:flex flex-1 relative overflow-hidden bg-gradient-to-br from-primary/20 via-background to-background">
         <div className="absolute inset-0 bg-[url('/grid-pattern.svg')] opacity-5" />
         
-        {/* Animated gradient orbs */}
         <motion.div
           animate={{
             scale: [1, 1.2, 1],
@@ -164,7 +194,6 @@ export default function Login() {
           className="absolute bottom-1/4 left-1/4 w-80 h-80 rounded-full bg-purple-500/20 blur-3xl"
         />
 
-        {/* Content */}
         <div className="relative z-10 flex flex-col justify-center px-16 xl:px-24">
           <motion.div
             initial={{ opacity: 0, x: 20 }}
@@ -172,38 +201,15 @@ export default function Login() {
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <h2 className="text-4xl xl:text-5xl font-display font-bold leading-tight mb-6">
-              Métricas que
+              Comece a
               <br />
-              <span className="gradient-text">impulsionam</span>
+              <span className="gradient-text">acompanhar</span>
               <br />
-              resultados
+              seus resultados
             </h2>
             <p className="text-lg text-muted-foreground max-w-md">
-              Acompanhe o desempenho das suas campanhas em Meta Ads, Google Ads e TikTok Ads em um só lugar.
+              Tenha acesso a métricas detalhadas das suas campanhas em tempo real.
             </p>
-          </motion.div>
-
-          {/* Stats preview */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-12 grid grid-cols-2 gap-4 max-w-md"
-          >
-            {[
-              { label: 'Clientes ativos', value: '50+' },
-              { label: 'Campanhas gerenciadas', value: '200+' },
-              { label: 'Investimento gerenciado', value: 'R$ 2M+' },
-              { label: 'ROAS médio', value: '4.2x' },
-            ].map((stat, index) => (
-              <div
-                key={stat.label}
-                className="glass-card p-4"
-              >
-                <p className="text-2xl font-bold font-display">{stat.value}</p>
-                <p className="text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            ))}
           </motion.div>
         </div>
       </div>
