@@ -1,105 +1,122 @@
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Sidebar } from '@/components/Sidebar';
-import { KPICard } from '@/components/KPICard';
-import { ConnectionStatus } from '@/components/ConnectionStatus';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import {
-  Users,
-  DollarSign,
-  AlertTriangle,
-  CheckCircle,
-  Plus,
-  Search,
-  MoreHorizontal,
-  Eye,
-  Settings,
-  MessageSquare,
-  Trash2,
-} from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+ import { useState } from 'react';
+ import { motion } from 'framer-motion';
+ import { Sidebar } from '@/components/Sidebar';
+ import { KPICard } from '@/components/KPICard';
+ import { Button } from '@/components/ui/button';
+ import { Input } from '@/components/ui/input';
+ import { Badge } from '@/components/ui/badge';
+ import { Skeleton } from '@/components/ui/skeleton';
+ import {
+   Users,
+   DollarSign,
+   AlertTriangle,
+   CheckCircle,
+   Plus,
+   Search,
+   MoreHorizontal,
+   Eye,
+   Pencil,
+   MessageSquare,
+   Trash2,
+   RefreshCw,
+ } from 'lucide-react';
+ import {
+   DropdownMenu,
+   DropdownMenuContent,
+   DropdownMenuItem,
+   DropdownMenuTrigger,
+ } from '@/components/ui/dropdown-menu';
+ import { useClients } from '@/hooks/useClients';
+ import { ClientFormDialog, type ClientFormData } from '@/components/admin/ClientFormDialog';
+ import { DeleteClientDialog } from '@/components/admin/DeleteClientDialog';
 
-// Mock data
-const mockClients = [
-  {
-    id: '1',
-    company: 'E-commerce Fashion',
-    email: 'cliente1@email.com',
-    status: 'active',
-    spend: 45230.5,
-    connections: { meta: 'connected', google: 'connected', tiktok: 'disconnected' },
-    weeklyReport: true,
-    lastActivity: new Date('2024-01-28'),
-  },
-  {
-    id: '2',
-    company: 'Tech Startup SaaS',
-    email: 'cliente2@email.com',
-    status: 'active',
-    spend: 28750.0,
-    connections: { meta: 'connected', google: 'expired', tiktok: 'connected' },
-    weeklyReport: true,
-    lastActivity: new Date('2024-01-27'),
-  },
-  {
-    id: '3',
-    company: 'Restaurante Gourmet',
-    email: 'cliente3@email.com',
-    status: 'pending',
-    spend: 12340.25,
-    connections: { meta: 'connected', google: 'disconnected', tiktok: 'disconnected' },
-    weeklyReport: false,
-    lastActivity: new Date('2024-01-25'),
-  },
-  {
-    id: '4',
-    company: 'Academia Premium',
-    email: 'cliente4@email.com',
-    status: 'active',
-    spend: 8920.0,
-    connections: { meta: 'error', google: 'connected', tiktok: 'disconnected' },
-    weeklyReport: true,
-    lastActivity: new Date('2024-01-28'),
-  },
-];
+ export default function AdminDashboard() {
+   const [searchQuery, setSearchQuery] = useState('');
+   const [formOpen, setFormOpen] = useState(false);
+   const [formMode, setFormMode] = useState<'create' | 'edit'>('create');
+   const [editingClient, setEditingClient] = useState<{
+     id: string;
+     userId: string;
+     email: string;
+     fullName: string | null;
+     companyName: string;
+     whatsapp: string | null;
+     adminWhatsapp: string | null;
+     monthlyGoal: number | null;
+     notes: string | null;
+     weeklyReportEnabled: boolean;
+   } | null>(null);
+   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+   const [deletingClient, setDeletingClient] = useState<{
+     id: string;
+     userId: string;
+     companyName: string;
+   } | null>(null);
+ 
+   const { clients, loading, refetch, createClient, updateClient, deleteClient } = useClients();
+ 
+   const filteredClients = clients.filter(
+     (client) =>
+       client.companyName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+       client.email.toLowerCase().includes(searchQuery.toLowerCase())
+   );
+ 
+   const totalClients = clients.length;
+   const totalSpend = clients.reduce((acc, c) => acc + c.totalSpend, 0);
+   const connectionIssues = clients.filter(
+     (c) =>
+       c.connections.meta !== 'connected' ||
+       c.connections.google !== 'connected' ||
+       c.connections.tiktok !== 'connected'
+   ).length;
+ 
+   const handleCreateClient = () => {
+     setEditingClient(null);
+     setFormMode('create');
+     setFormOpen(true);
+   };
+ 
+   const handleEditClient = (client: typeof clients[0]) => {
+     setEditingClient({
+       id: client.id,
+       userId: client.userId,
+       email: client.email,
+       fullName: client.fullName,
+       companyName: client.companyName,
+       whatsapp: client.whatsapp,
+       adminWhatsapp: client.adminWhatsapp,
+       monthlyGoal: client.monthlyGoal,
+       notes: client.notes,
+       weeklyReportEnabled: client.weeklyReportEnabled,
+     });
+     setFormMode('edit');
+     setFormOpen(true);
+   };
+ 
+   const handleDeleteClient = (client: typeof clients[0]) => {
+     setDeletingClient({
+       id: client.id,
+       userId: client.userId,
+       companyName: client.companyName,
+     });
+     setDeleteDialogOpen(true);
+   };
+ 
+   const handleFormSubmit = async (data: ClientFormData) => {
+     if (formMode === 'create') {
+       await createClient(data);
+     } else if (editingClient) {
+       await updateClient(editingClient.id, editingClient.userId, data);
+     }
+   };
+ 
+   const handleDeleteConfirm = async () => {
+     if (deletingClient) {
+       await deleteClient(deletingClient.id, deletingClient.userId);
+     }
+   };
 
-export default function AdminDashboard() {
-  const [searchQuery, setSearchQuery] = useState('');
-
-  const filteredClients = mockClients.filter(
-    (client) =>
-      client.company.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      client.email.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  const activeClients = mockClients.filter((c) => c.status === 'active').length;
-  const totalSpend = mockClients.reduce((acc, c) => acc + c.spend, 0);
-  const connectionIssues = mockClients.filter(
-    (c) =>
-      c.connections.meta !== 'connected' ||
-      c.connections.google !== 'connected' ||
-      c.connections.tiktok !== 'connected'
-  ).length;
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Badge className="bg-chart-positive/10 text-chart-positive border-chart-positive/20">Ativo</Badge>;
-      case 'pending':
-        return <Badge className="bg-chart-warning/10 text-chart-warning border-chart-warning/20">Pendente</Badge>;
-      default:
-        return <Badge variant="secondary">Inativo</Badge>;
-    }
-  };
-
-  const getConnectionDot = (status: string) => {
+ const getConnectionDot = (status: string) => {
     const colors = {
       connected: 'bg-chart-positive',
       expired: 'bg-chart-warning',
@@ -122,17 +139,22 @@ export default function AdminDashboard() {
               Gerencie clientes, integrações e relatórios
             </p>
           </div>
-          <Button>
+ <div className="flex gap-2">
+             <Button variant="outline" size="icon" onClick={refetch} disabled={loading}>
+               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+             </Button>
+             <Button onClick={handleCreateClient}>
             <Plus className="w-4 h-4 mr-2" />
             Novo Cliente
           </Button>
+ </div>
         </div>
 
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <KPICard
             title="Clientes Ativos"
-            value={activeClients}
+ value={totalClients}
             format="number"
             icon={<Users className="w-5 h-5" />}
             delay={0}
@@ -175,7 +197,7 @@ export default function AdminDashboard() {
               <div>
                 <h3 className="text-lg font-semibold">Clientes</h3>
                 <p className="text-sm text-muted-foreground">
-                  {mockClients.length} clientes cadastrados
+ {clients.length} clientes cadastrados
                 </p>
               </div>
               <div className="relative">
@@ -195,7 +217,6 @@ export default function AdminDashboard() {
               <thead>
                 <tr className="border-b border-border bg-muted/30">
                   <th className="text-left py-4 px-4">Empresa</th>
-                  <th className="text-left py-4 px-4">Status</th>
                   <th className="text-left py-4 px-4">Conexões</th>
                   <th className="text-right py-4 px-4">Investimento</th>
                   <th className="text-center py-4 px-4">Relatório</th>
@@ -203,7 +224,24 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody>
-                {filteredClients.map((client, index) => (
+ {loading ? (
+                   Array.from({ length: 3 }).map((_, i) => (
+                     <tr key={i}>
+                       <td><Skeleton className="h-10 w-40" /></td>
+                       <td><Skeleton className="h-6 w-32" /></td>
+                       <td><Skeleton className="h-6 w-24" /></td>
+                       <td><Skeleton className="h-6 w-16" /></td>
+                       <td><Skeleton className="h-8 w-8" /></td>
+                     </tr>
+                   ))
+                 ) : filteredClients.length === 0 ? (
+                   <tr>
+                     <td colSpan={5} className="text-center py-12 text-muted-foreground">
+                       {searchQuery ? 'Nenhum cliente encontrado.' : 'Nenhum cliente cadastrado.'}
+                     </td>
+                   </tr>
+                 ) : (
+                   filteredClients.map((client, index) => (
                   <motion.tr
                     key={client.id}
                     initial={{ opacity: 0, x: -20 }}
@@ -212,11 +250,10 @@ export default function AdminDashboard() {
                   >
                     <td>
                       <div>
-                        <p className="font-medium">{client.company}</p>
+ <p className="font-medium">{client.companyName}</p>
                         <p className="text-sm text-muted-foreground">{client.email}</p>
                       </div>
                     </td>
-                    <td>{getStatusBadge(client.status)}</td>
                     <td>
                       <div className="flex items-center gap-3">
                         <div className="flex items-center gap-1.5" title="Meta Ads">
@@ -237,10 +274,10 @@ export default function AdminDashboard() {
                       {new Intl.NumberFormat('pt-BR', {
                         style: 'currency',
                         currency: 'BRL',
-                      }).format(client.spend)}
+ }).format(client.totalSpend)}
                     </td>
                     <td className="text-center">
-                      {client.weeklyReport ? (
+ {client.weeklyReportEnabled ? (
                         <Badge className="bg-chart-positive/10 text-chart-positive border-chart-positive/20">
                           Ativo
                         </Badge>
@@ -260,15 +297,18 @@ export default function AdminDashboard() {
                             <Eye className="w-4 h-4 mr-2" />
                             Ver Dashboard
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Settings className="w-4 h-4 mr-2" />
-                            Configurações
+ <DropdownMenuItem onClick={() => handleEditClient(client)}>
+                             <Pencil className="w-4 h-4 mr-2" />
+                             Editar
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <MessageSquare className="w-4 h-4 mr-2" />
                             Enviar Relatório
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-destructive">
+ <DropdownMenuItem
+                             className="text-destructive"
+                             onClick={() => handleDeleteClient(client)}
+                           >
                             <Trash2 className="w-4 h-4 mr-2" />
                             Excluir
                           </DropdownMenuItem>
@@ -276,11 +316,43 @@ export default function AdminDashboard() {
                       </DropdownMenu>
                     </td>
                   </motion.tr>
-                ))}
+ ))
+                 )}
               </tbody>
             </table>
           </div>
         </motion.div>
+         
+         {/* Form Dialog */}
+         <ClientFormDialog
+           open={formOpen}
+           onOpenChange={setFormOpen}
+           onSubmit={handleFormSubmit}
+           mode={formMode}
+           initialData={
+             editingClient
+               ? {
+                   id: editingClient.id,
+                   email: editingClient.email,
+                   fullName: editingClient.fullName || '',
+                   companyName: editingClient.companyName,
+                   whatsapp: editingClient.whatsapp || '',
+                   adminWhatsapp: editingClient.adminWhatsapp || '',
+                   monthlyGoal: editingClient.monthlyGoal ?? undefined,
+                   notes: editingClient.notes || '',
+                   weeklyReportEnabled: editingClient.weeklyReportEnabled,
+                 }
+               : undefined
+           }
+         />
+ 
+         {/* Delete Confirmation */}
+         <DeleteClientDialog
+           open={deleteDialogOpen}
+           onOpenChange={setDeleteDialogOpen}
+           onConfirm={handleDeleteConfirm}
+           clientName={deletingClient?.companyName || ''}
+         />
       </main>
     </div>
   );
