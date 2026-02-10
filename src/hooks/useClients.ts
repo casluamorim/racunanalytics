@@ -131,119 +131,64 @@
      fetchClients();
    }, [fetchClients]);
  
-   const createClient = async (data: ClientFormData) => {
-     try {
-       // 1. Create auth user
-       const { data: authData, error: authError } = await supabase.auth.signUp({
-         email: data.email,
-         password: data.password || '',
-         options: {
-           data: {
-             full_name: data.fullName,
-           },
-         },
-       });
- 
-       if (authError) throw authError;
-       if (!authData.user) throw new Error('Falha ao criar usuário');
- 
-       const userId = authData.user.id;
- 
-       // 2. Update profile with whatsapp
-       if (data.whatsapp) {
-         const { error: profileError } = await supabase
-           .from('profiles')
-           .update({ whatsapp: data.whatsapp })
-           .eq('id', userId);
- 
-         if (profileError) throw profileError;
-       }
- 
-       // 3. Create client record
-       const { error: clientError } = await supabase
-         .from('clients')
-         .insert({
-           user_id: userId,
-           company_name: data.companyName,
-           admin_whatsapp: data.adminWhatsapp || null,
-           monthly_goal: data.monthlyGoal || null,
-           notes: data.notes || null,
-           weekly_report_enabled: data.weeklyReportEnabled,
-         });
- 
-       if (clientError) throw clientError;
- 
-       toast.success('Cliente criado com sucesso!');
-       await fetchClients();
-     } catch (err) {
-       console.error('Error creating client:', err);
-       const message = err instanceof Error ? err.message : 'Erro ao criar cliente';
-       toast.error(message);
-       throw err;
-     }
-   };
- 
-   const updateClient = async (clientId: string, userId: string, data: ClientFormData) => {
-     try {
-       // 1. Update profile
-       const { error: profileError } = await supabase
-         .from('profiles')
-         .update({
-           full_name: data.fullName,
-           whatsapp: data.whatsapp || null,
-         })
-         .eq('id', userId);
- 
-       if (profileError) throw profileError;
- 
-       // 2. Update client record
-       const { error: clientError } = await supabase
-         .from('clients')
-         .update({
-           company_name: data.companyName,
-           admin_whatsapp: data.adminWhatsapp || null,
-           monthly_goal: data.monthlyGoal || null,
-           notes: data.notes || null,
-           weekly_report_enabled: data.weeklyReportEnabled,
-         })
-         .eq('id', clientId);
- 
-       if (clientError) throw clientError;
- 
-       toast.success('Cliente atualizado com sucesso!');
-       await fetchClients();
-     } catch (err) {
-       console.error('Error updating client:', err);
-       const message = err instanceof Error ? err.message : 'Erro ao atualizar cliente';
-       toast.error(message);
-       throw err;
-     }
-   };
- 
-   const deleteClient = async (clientId: string, userId: string) => {
-     try {
-       // Delete client (cascades to related data via DB constraints)
-       const { error: clientError } = await supabase
-         .from('clients')
-         .delete()
-         .eq('id', clientId);
- 
-       if (clientError) throw clientError;
- 
-       // Note: The auth user and profile will remain
-       // In production, you might want an edge function to fully delete the user
- 
-       toast.success('Cliente excluído com sucesso!');
-       await fetchClients();
-     } catch (err) {
-       console.error('Error deleting client:', err);
-       const message = err instanceof Error ? err.message : 'Erro ao excluir cliente';
-       toast.error(message);
-       throw err;
-     }
-   };
- 
-   return {
+    const createClient = async (data: ClientFormData) => {
+      try {
+        const { data: result, error } = await supabase.functions.invoke('manage-client', {
+          body: { action: 'create', ...data },
+        });
+
+        if (error) throw error;
+        if (result?.error) throw new Error(result.error);
+
+        toast.success('Cliente criado com sucesso!');
+        await fetchClients();
+      } catch (err) {
+        console.error('Error creating client:', err);
+        const message = err instanceof Error ? err.message : 'Erro ao criar cliente';
+        toast.error(message);
+        throw err;
+      }
+    };
+
+    const updateClient = async (clientId: string, userId: string, data: ClientFormData) => {
+      try {
+        const { data: result, error } = await supabase.functions.invoke('manage-client', {
+          body: { action: 'update', clientId, userId, ...data },
+        });
+
+        if (error) throw error;
+        if (result?.error) throw new Error(result.error);
+
+        toast.success('Cliente atualizado com sucesso!');
+        await fetchClients();
+      } catch (err) {
+        console.error('Error updating client:', err);
+        const message = err instanceof Error ? err.message : 'Erro ao atualizar cliente';
+        toast.error(message);
+        throw err;
+      }
+    };
+
+    const deleteClient = async (clientId: string, userId: string) => {
+      try {
+        const { data: result, error } = await supabase.functions.invoke('manage-client', {
+          body: { action: 'delete', clientId, userId },
+        });
+
+        if (error) throw error;
+        if (result?.error) throw new Error(result.error);
+
+        toast.success('Cliente excluído com sucesso!');
+        await fetchClients();
+      } catch (err) {
+        console.error('Error deleting client:', err);
+        const message = err instanceof Error ? err.message : 'Erro ao excluir cliente';
+        toast.error(message);
+        throw err;
+      }
+    };
+
+    return {
      clients,
      loading,
      error,
