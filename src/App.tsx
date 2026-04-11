@@ -17,6 +17,7 @@ import AdminSettings from "./pages/admin/AdminSettings";
 import Campaigns from "./pages/client/Campaigns";
 import Reports from "./pages/client/Reports";
 import ClientSettings from "./pages/client/ClientSettings";
+import OAuthCallback from "./pages/OAuthCallback";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -39,6 +40,8 @@ function AppRoutes() {
       <Route path="/admin/alerts" element={<ProtectedRoute requireAdmin><AdminAlerts /></ProtectedRoute>} />
       <Route path="/admin/logs" element={<ProtectedRoute requireAdmin><AdminLogs /></ProtectedRoute>} />
       <Route path="/admin/settings" element={<ProtectedRoute requireAdmin><AdminSettings /></ProtectedRoute>} />
+      {/* OAuth callback */}
+      <Route path="/oauth/callback" element={<ProtectedRoute requireAdmin><OAuthCallback /></ProtectedRoute>} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
