@@ -136,6 +136,7 @@ export default function Dashboard() {
   });
   const [platform, setPlatform] = useState<'all' | 'meta' | 'google' | 'tiktok'>('all');
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const contentApprovalUrl = useContentApprovalUrl();
 
   const handleRefresh = async () => {
     setIsRefreshing(true);
