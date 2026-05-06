@@ -301,7 +301,25 @@
                    <FormMessage />
                  </FormItem>
                )}
-             />
+              />
+
+              <FormField
+                control={form.control}
+                name="contentApprovalUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Link de Aprovação de Conteúdo</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="url"
+                        placeholder="https://..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
  
              <FormField
                control={form.control}
