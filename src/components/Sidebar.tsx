@@ -16,9 +16,8 @@ import {
   CheckSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase } from '@/integrations/supabase/client';
 import { useContentApprovalUrl } from '@/hooks/useContentApprovalUrl';
 
 interface NavItemProps {
