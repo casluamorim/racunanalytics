@@ -88,8 +88,9 @@
        adminWhatsapp: client.adminWhatsapp,
        monthlyGoal: client.monthlyGoal,
        notes: client.notes,
-       weeklyReportEnabled: client.weeklyReportEnabled,
-     });
+      weeklyReportEnabled: client.weeklyReportEnabled,
+      contentApprovalUrl: client.contentApprovalUrl,
+    });
      setFormMode('edit');
      setFormOpen(true);
    };
