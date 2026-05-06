@@ -154,7 +154,8 @@
          adminWhatsapp: '',
          monthlyGoal: '',
          notes: '',
-         weeklyReportEnabled: true,
+          weeklyReportEnabled: true,
+          contentApprovalUrl: '',
        });
      }
    }, [open, initialData, form]);
