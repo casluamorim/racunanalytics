@@ -19,8 +19,11 @@ import {
   RefreshCw,
   Download,
   Clock,
+  CheckSquare,
+  ExternalLink,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useContentApprovalUrl } from '@/hooks/useContentApprovalUrl';
 
 // Mock data for demo
 const mockChartData = Array.from({ length: 30 }, (_, i) => {
