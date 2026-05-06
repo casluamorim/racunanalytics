@@ -107,7 +107,8 @@
            adminWhatsapp: client.admin_whatsapp,
            monthlyGoal: client.monthly_goal ? Number(client.monthly_goal) : null,
            notes: client.notes,
-           weeklyReportEnabled: client.weekly_report_enabled ?? true,
+          weeklyReportEnabled: client.weekly_report_enabled ?? true,
+          contentApprovalUrl: (client as any).content_approval_url ?? null,
            onboardingCompleted: client.onboarding_completed ?? false,
            createdAt: client.created_at,
            connections: {
