@@ -124,23 +124,25 @@
        whatsapp: '',
        adminWhatsapp: '',
        monthlyGoal: '',
-       notes: '',
-       weeklyReportEnabled: true,
-     },
-   });
- 
-   useEffect(() => {
-     if (open && initialData) {
-       form.reset({
-         email: initialData.email || '',
-         password: '',
-         fullName: initialData.fullName || '',
-         companyName: initialData.companyName || '',
-         whatsapp: initialData.whatsapp || '',
-         adminWhatsapp: initialData.adminWhatsapp || '',
-         monthlyGoal: initialData.monthlyGoal?.toString() || '',
-         notes: initialData.notes || '',
-         weeklyReportEnabled: initialData.weeklyReportEnabled ?? true,
+        notes: '',
+        weeklyReportEnabled: true,
+        contentApprovalUrl: '',
+      },
+    });
+  
+    useEffect(() => {
+      if (open && initialData) {
+        form.reset({
+          email: initialData.email || '',
+          password: '',
+          fullName: initialData.fullName || '',
+          companyName: initialData.companyName || '',
+          whatsapp: initialData.whatsapp || '',
+          adminWhatsapp: initialData.adminWhatsapp || '',
+          monthlyGoal: initialData.monthlyGoal?.toString() || '',
+          notes: initialData.notes || '',
+          weeklyReportEnabled: initialData.weeklyReportEnabled ?? true,
+          contentApprovalUrl: initialData.contentApprovalUrl || '',
        });
      } else if (open) {
        form.reset({
