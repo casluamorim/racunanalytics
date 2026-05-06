@@ -70,8 +70,15 @@
      .max(1000, { message: 'Notas devem ter no máximo 1000 caracteres' })
      .optional()
      .or(z.literal('')),
-   weeklyReportEnabled: z.boolean().default(true),
- });
+  weeklyReportEnabled: z.boolean().default(true),
+  contentApprovalUrl: z
+    .string()
+    .trim()
+    .url({ message: 'URL inválida' })
+    .max(500, { message: 'URL deve ter no máximo 500 caracteres' })
+    .optional()
+    .or(z.literal('')),
+});
  
  // Input type for the form (before transform)
  type ClientFormInput = {
@@ -83,8 +90,9 @@
    adminWhatsapp?: string;
    monthlyGoal?: string | number;
    notes?: string;
-   weeklyReportEnabled: boolean;
- };
+  weeklyReportEnabled: boolean;
+  contentApprovalUrl?: string;
+};
  
  // Output type after transform (what onSubmit receives)
  export type ClientFormData = z.output<typeof clientFormSchema>;
@@ -116,23 +124,25 @@
        whatsapp: '',
        adminWhatsapp: '',
        monthlyGoal: '',
-       notes: '',
-       weeklyReportEnabled: true,
-     },
-   });
- 
-   useEffect(() => {
-     if (open && initialData) {
-       form.reset({
-         email: initialData.email || '',
-         password: '',
-         fullName: initialData.fullName || '',
-         companyName: initialData.companyName || '',
-         whatsapp: initialData.whatsapp || '',
-         adminWhatsapp: initialData.adminWhatsapp || '',
-         monthlyGoal: initialData.monthlyGoal?.toString() || '',
-         notes: initialData.notes || '',
-         weeklyReportEnabled: initialData.weeklyReportEnabled ?? true,
+        notes: '',
+        weeklyReportEnabled: true,
+        contentApprovalUrl: '',
+      },
+    });
+  
+    useEffect(() => {
+      if (open && initialData) {
+        form.reset({
+          email: initialData.email || '',
+          password: '',
+          fullName: initialData.fullName || '',
+          companyName: initialData.companyName || '',
+          whatsapp: initialData.whatsapp || '',
+          adminWhatsapp: initialData.adminWhatsapp || '',
+          monthlyGoal: initialData.monthlyGoal?.toString() || '',
+          notes: initialData.notes || '',
+          weeklyReportEnabled: initialData.weeklyReportEnabled ?? true,
+          contentApprovalUrl: initialData.contentApprovalUrl || '',
        });
      } else if (open) {
        form.reset({
@@ -144,7 +154,8 @@
          adminWhatsapp: '',
          monthlyGoal: '',
          notes: '',
-         weeklyReportEnabled: true,
+          weeklyReportEnabled: true,
+          contentApprovalUrl: '',
        });
      }
    }, [open, initialData, form]);
@@ -290,7 +301,25 @@
                    <FormMessage />
                  </FormItem>
                )}
-             />
+              />
+
+              <FormField
+                control={form.control}
+                name="contentApprovalUrl"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Link de Aprovação de Conteúdo</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="url"
+                        placeholder="https://..."
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
  
              <FormField
                control={form.control}

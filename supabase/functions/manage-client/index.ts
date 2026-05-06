@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
     const { action, ...payload } = await req.json()
 
     if (action === 'create') {
-      const { email, password, fullName, companyName, whatsapp, adminWhatsapp, monthlyGoal, notes, weeklyReportEnabled } = payload
+      const { email, password, fullName, companyName, whatsapp, adminWhatsapp, monthlyGoal, notes, weeklyReportEnabled, contentApprovalUrl } = payload
 
       // Create auth user via admin API (doesn't affect current session)
       const { data: newUser, error: createError } = await adminClient.auth.admin.createUser({
@@ -65,6 +65,7 @@ Deno.serve(async (req) => {
         monthly_goal: monthlyGoal || null,
         notes: notes || null,
         weekly_report_enabled: weeklyReportEnabled ?? true,
+        content_approval_url: contentApprovalUrl || null,
       })
 
       if (clientError) throw clientError
@@ -83,7 +84,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'update') {
-      const { clientId, userId: targetUserId, fullName, companyName, whatsapp, adminWhatsapp, monthlyGoal, notes, weeklyReportEnabled } = payload
+      const { clientId, userId: targetUserId, fullName, companyName, whatsapp, adminWhatsapp, monthlyGoal, notes, weeklyReportEnabled, contentApprovalUrl } = payload
 
       await adminClient.from('profiles').update({
         full_name: fullName,
@@ -96,6 +97,7 @@ Deno.serve(async (req) => {
         monthly_goal: monthlyGoal || null,
         notes: notes || null,
         weekly_report_enabled: weeklyReportEnabled,
+        content_approval_url: contentApprovalUrl || null,
       }).eq('id', clientId)
 
       if (clientError) throw clientError

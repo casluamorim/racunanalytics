@@ -13,8 +13,9 @@
    adminWhatsapp: string | null;
    monthlyGoal: number | null;
    notes: string | null;
-   weeklyReportEnabled: boolean;
-   onboardingCompleted: boolean;
+  weeklyReportEnabled: boolean;
+  onboardingCompleted: boolean;
+  contentApprovalUrl: string | null;
    createdAt: string;
    connections: {
      meta: 'connected' | 'expired' | 'error' | 'disconnected';
@@ -35,18 +36,19 @@
        
        // Fetch clients with their profiles
        const { data: clientsData, error: clientsError } = await supabase
-         .from('clients')
-         .select(`
-           id,
-           user_id,
-           company_name,
-           admin_whatsapp,
-           monthly_goal,
-           notes,
-           weekly_report_enabled,
-           onboarding_completed,
-           created_at
-         `)
+        .from('clients')
+        .select(`
+          id,
+          user_id,
+          company_name,
+          admin_whatsapp,
+          monthly_goal,
+          notes,
+          weekly_report_enabled,
+          onboarding_completed,
+          content_approval_url,
+          created_at
+        `)
          .order('created_at', { ascending: false });
  
        if (clientsError) throw clientsError;
@@ -105,7 +107,8 @@
            adminWhatsapp: client.admin_whatsapp,
            monthlyGoal: client.monthly_goal ? Number(client.monthly_goal) : null,
            notes: client.notes,
-           weeklyReportEnabled: client.weekly_report_enabled ?? true,
+          weeklyReportEnabled: client.weekly_report_enabled ?? true,
+          contentApprovalUrl: (client as any).content_approval_url ?? null,
            onboardingCompleted: client.onboarding_completed ?? false,
            createdAt: client.created_at,
            connections: {
