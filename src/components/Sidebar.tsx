@@ -68,7 +68,7 @@ export function Sidebar() {
   const { isAdmin, signOut, user } = useAuth();
   const location = useLocation();
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const contentApprovalUrl = useContentApprovalUrl();
+  const { url: contentApprovalUrl, logAccess: logContentApprovalAccess } = useContentApprovalUrl();
 
   const clientNavItems = [
     { icon: <LayoutDashboard className="w-5 h-5" />, label: 'Dashboard', href: '/dashboard' },
