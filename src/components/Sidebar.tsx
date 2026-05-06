@@ -128,6 +128,7 @@ export function Sidebar() {
             href={contentApprovalUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => logContentApprovalAccess()}
             className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/10"
           >
             <CheckSquare className="w-5 h-5 shrink-0" />
