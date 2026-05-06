@@ -90,8 +90,9 @@
    adminWhatsapp?: string;
    monthlyGoal?: string | number;
    notes?: string;
-   weeklyReportEnabled: boolean;
- };
+  weeklyReportEnabled: boolean;
+  contentApprovalUrl?: string;
+};
  
  // Output type after transform (what onSubmit receives)
  export type ClientFormData = z.output<typeof clientFormSchema>;
