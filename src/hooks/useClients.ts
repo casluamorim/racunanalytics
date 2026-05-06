@@ -13,8 +13,9 @@
    adminWhatsapp: string | null;
    monthlyGoal: number | null;
    notes: string | null;
-   weeklyReportEnabled: boolean;
-   onboardingCompleted: boolean;
+  weeklyReportEnabled: boolean;
+  onboardingCompleted: boolean;
+  contentApprovalUrl: string | null;
    createdAt: string;
    connections: {
      meta: 'connected' | 'expired' | 'error' | 'disconnected';
