@@ -13,10 +13,12 @@ import {
   Link2,
   ChevronLeft,
   ChevronRight,
+  CheckSquare,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '@/integrations/supabase/client';
 
 interface NavItemProps {
   icon: React.ReactNode;
