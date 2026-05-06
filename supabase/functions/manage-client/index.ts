@@ -84,7 +84,7 @@ Deno.serve(async (req) => {
     }
 
     if (action === 'update') {
-      const { clientId, userId: targetUserId, fullName, companyName, whatsapp, adminWhatsapp, monthlyGoal, notes, weeklyReportEnabled } = payload
+      const { clientId, userId: targetUserId, fullName, companyName, whatsapp, adminWhatsapp, monthlyGoal, notes, weeklyReportEnabled, contentApprovalUrl } = payload
 
       await adminClient.from('profiles').update({
         full_name: fullName,
@@ -97,6 +97,7 @@ Deno.serve(async (req) => {
         monthly_goal: monthlyGoal || null,
         notes: notes || null,
         weekly_report_enabled: weeklyReportEnabled,
+        content_approval_url: contentApprovalUrl || null,
       }).eq('id', clientId)
 
       if (clientError) throw clientError
