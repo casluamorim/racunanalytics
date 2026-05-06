@@ -184,6 +184,30 @@ export default function Dashboard() {
           <PlatformFilter value={platform} onChange={setPlatform} />
         </div>
 
+        {contentApprovalUrl && (
+          <motion.a
+            href={contentApprovalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center justify-between gap-4 mb-8 p-5 rounded-xl border border-primary/30 bg-gradient-to-r from-primary/10 to-primary/5 hover:from-primary/15 hover:to-primary/10 transition-colors group"
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 rounded-lg bg-primary/15 text-primary flex items-center justify-center">
+                <CheckSquare className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold">Aprovação de Conteúdo</h3>
+                <p className="text-sm text-muted-foreground">
+                  Acesse seu painel exclusivo para revisar e aprovar conteúdos
+                </p>
+              </div>
+            </div>
+            <ExternalLink className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+          </motion.a>
+        )}
+
         {/* KPI Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <KPICard
