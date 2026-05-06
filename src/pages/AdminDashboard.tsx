@@ -342,8 +342,9 @@
                    adminWhatsapp: editingClient.adminWhatsapp || '',
                    monthlyGoal: editingClient.monthlyGoal ?? undefined,
                    notes: editingClient.notes || '',
-                   weeklyReportEnabled: editingClient.weeklyReportEnabled,
-                 }
+                  weeklyReportEnabled: editingClient.weeklyReportEnabled,
+                  contentApprovalUrl: editingClient.contentApprovalUrl || '',
+                }
                : undefined
            }
          />
