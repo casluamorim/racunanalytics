@@ -92,6 +92,7 @@ export type Database = {
         Row: {
           admin_whatsapp: string | null
           company_name: string
+          content_approval_url: string | null
           created_at: string
           id: string
           monthly_goal: number | null
@@ -104,6 +105,7 @@ export type Database = {
         Insert: {
           admin_whatsapp?: string | null
           company_name: string
+          content_approval_url?: string | null
           created_at?: string
           id?: string
           monthly_goal?: number | null
@@ -116,6 +118,7 @@ export type Database = {
         Update: {
           admin_whatsapp?: string | null
           company_name?: string
+          content_approval_url?: string | null
           created_at?: string
           id?: string
           monthly_goal?: number | null
