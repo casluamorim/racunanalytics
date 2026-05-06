@@ -123,6 +123,28 @@ export function Sidebar() {
             isCollapsed={isCollapsed}
           />
         ))}
+        {!isAdmin && contentApprovalUrl && (
+          <a
+            href={contentApprovalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-white/10"
+          >
+            <CheckSquare className="w-5 h-5 shrink-0" />
+            <AnimatePresence>
+              {!isCollapsed && (
+                <motion.span
+                  initial={{ opacity: 0, width: 0 }}
+                  animate={{ opacity: 1, width: 'auto' }}
+                  exit={{ opacity: 0, width: 0 }}
+                  className="text-sm font-medium whitespace-nowrap overflow-hidden"
+                >
+                  Aprovação de Conteúdo
+                </motion.span>
+              )}
+            </AnimatePresence>
+          </a>
+        )}
       </nav>
 
       {/* User section */}
