@@ -70,8 +70,15 @@
      .max(1000, { message: 'Notas devem ter no máximo 1000 caracteres' })
      .optional()
      .or(z.literal('')),
-   weeklyReportEnabled: z.boolean().default(true),
- });
+  weeklyReportEnabled: z.boolean().default(true),
+  contentApprovalUrl: z
+    .string()
+    .trim()
+    .url({ message: 'URL inválida' })
+    .max(500, { message: 'URL deve ter no máximo 500 caracteres' })
+    .optional()
+    .or(z.literal('')),
+});
  
  // Input type for the form (before transform)
  type ClientFormInput = {
