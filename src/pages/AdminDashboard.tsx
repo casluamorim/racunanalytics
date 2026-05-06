@@ -44,8 +44,9 @@
      adminWhatsapp: string | null;
      monthlyGoal: number | null;
      notes: string | null;
-     weeklyReportEnabled: boolean;
-   } | null>(null);
+    weeklyReportEnabled: boolean;
+    contentApprovalUrl: string | null;
+  } | null>(null);
    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
    const [deletingClient, setDeletingClient] = useState<{
      id: string;
