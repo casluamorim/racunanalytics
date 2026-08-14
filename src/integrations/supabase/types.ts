@@ -354,7 +354,88 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      client_platform_connections: {
+        Row: {
+          account_id: string | null
+          account_name: string | null
+          client_id: string | null
+          created_at: string | null
+          id: string | null
+          last_sync_at: string | null
+          platform: Database["public"]["Enums"]["ad_platform"] | null
+          status: Database["public"]["Enums"]["connection_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          account_id?: string | null
+          account_name?: string | null
+          client_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          last_sync_at?: string | null
+          platform?: Database["public"]["Enums"]["ad_platform"] | null
+          status?: Database["public"]["Enums"]["connection_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          account_id?: string | null
+          account_name?: string | null
+          client_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          last_sync_at?: string | null
+          platform?: Database["public"]["Enums"]["ad_platform"] | null
+          status?: Database["public"]["Enums"]["connection_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "platform_connections_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      client_weekly_report_logs: {
+        Row: {
+          client_id: string | null
+          id: string | null
+          report_data: Json | null
+          sent_at: string | null
+          sent_to_admin: boolean | null
+          sent_to_client: boolean | null
+          status: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          id?: string | null
+          report_data?: Json | null
+          sent_at?: string | null
+          sent_to_admin?: boolean | null
+          sent_to_client?: boolean | null
+          status?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          id?: string | null
+          report_data?: Json | null
+          sent_at?: string | null
+          sent_to_admin?: boolean | null
+          sent_to_client?: boolean | null
+          status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "weekly_report_logs_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_user_client_id: { Args: { _user_id: string }; Returns: string }
