@@ -46,16 +46,18 @@ export function useContentApprovalUrl() {
   const logAccess = useCallback(async () => {
     if (!url || !clientId) return;
     try {
-      await supabase.rpc('insert_audit_log', {
-        _action: 'content_approval_access',
-        _entity_type: 'client',
-        _entity_id: clientId,
-        _new_values: { url },
+      await supabase.functions.invoke('log-access', {
+        body: {
+          action: 'content_approval_access',
+          entityType: 'client',
+          entityId: clientId,
+        },
       });
-    } catch (err) {
-      console.error('Failed to log content approval access:', err);
+    } catch {
+      // Access logging is best-effort and must never block the user.
     }
   }, [url, clientId]);
+
 
   return { url, loading, logAccess, isValid: !!url };
 }

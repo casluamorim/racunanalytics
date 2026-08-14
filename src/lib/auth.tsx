@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
@@ -25,19 +26,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const fetchUserRole = async (userId: string) => {
     try {
-      const { data, error } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', userId)
-        .single();
+      // Server-side role check: has_role() runs in the database and cannot be
+      // influenced by the client. UI state is a convenience only — every
+      // privileged read/write is additionally enforced by RLS.
+      const { data: isAdminRole, error } = await supabase.rpc('has_role', {
+        _user_id: userId,
+        _role: 'admin',
+      });
 
       if (error) throw error;
-      setRole(data?.role as UserRole || 'client');
+      setRole(isAdminRole ? 'admin' : 'client');
     } catch (error) {
-      console.error('Error fetching user role:', error);
+      logger.error('Error fetching user role:', error);
       setRole('client');
     }
   };
+
 
   useEffect(() => {
     // Set up auth state listener BEFORE checking for existing session

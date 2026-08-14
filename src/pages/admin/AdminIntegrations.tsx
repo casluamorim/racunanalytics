@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { Sidebar } from '@/components/Sidebar';
 import { motion } from 'framer-motion';
 import { Link2, ExternalLink, CheckCircle, XCircle, AlertCircle, Clock, Loader2, Unplug } from 'lucide-react';
@@ -43,13 +44,13 @@ export default function AdminIntegrations() {
     try {
       const { data, error } = await supabase
         .from('platform_connections')
-        .select('*')
+        .select('id, client_id, platform, account_id, account_name, status, token_expires_at, last_sync_at, created_at, updated_at')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       setConnections((data as PlatformConnection[]) || []);
     } catch (err) {
-      console.error('Error fetching connections:', err);
+      logger.error('Error fetching connections:', err);
     } finally {
       setLoading(false);
     }
@@ -95,7 +96,7 @@ export default function AdminIntegrations() {
         window.location.href = data.url;
       }
     } catch (err: any) {
-      console.error('OAuth initiate error:', err);
+      logger.error('OAuth initiate error:', err);
       toast.error(err.message || 'Erro ao iniciar conexão');
       setConnectingPlatform(null);
     }

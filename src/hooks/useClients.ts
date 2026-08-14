@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
  import { useState, useEffect, useCallback } from 'react';
  import { supabase } from '@/integrations/supabase/client';
  import { toast } from 'sonner';
@@ -122,7 +123,7 @@
  
        setClients(formattedClients);
      } catch (err) {
-       console.error('Error fetching clients:', err);
+       logger.error('Error fetching clients:', err);
        setError(err as Error);
        toast.error('Erro ao carregar clientes');
      } finally {
@@ -146,7 +147,7 @@
         toast.success('Cliente criado com sucesso!');
         await fetchClients();
       } catch (err) {
-        console.error('Error creating client:', err);
+        logger.error('Error creating client:', err);
         const message = err instanceof Error ? err.message : 'Erro ao criar cliente';
         toast.error(message);
         throw err;
@@ -165,7 +166,7 @@
         toast.success('Cliente atualizado com sucesso!');
         await fetchClients();
       } catch (err) {
-        console.error('Error updating client:', err);
+        logger.error('Error updating client:', err);
         const message = err instanceof Error ? err.message : 'Erro ao atualizar cliente';
         toast.error(message);
         throw err;
@@ -184,7 +185,7 @@
         toast.success('Cliente excluído com sucesso!');
         await fetchClients();
       } catch (err) {
-        console.error('Error deleting client:', err);
+        logger.error('Error deleting client:', err);
         const message = err instanceof Error ? err.message : 'Erro ao excluir cliente';
         toast.error(message);
         throw err;

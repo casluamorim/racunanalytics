@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -38,7 +39,7 @@ export default function Register() {
 
     if (error) {
       toast.error('Erro ao criar conta. Tente novamente.');
-      console.error('Signup error:', error);
+      logger.error('Signup error:', error);
       setIsLoading(false);
       return;
     }
