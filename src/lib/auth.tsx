@@ -1,3 +1,4 @@
+import { logger } from '@/lib/logger';
 import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { User, Session } from '@supabase/supabase-js';
@@ -34,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       setRole(data?.role as UserRole || 'client');
     } catch (error) {
-      console.error('Error fetching user role:', error);
+      logger.error('Error fetching user role:', error);
       setRole('client');
     }
   };
