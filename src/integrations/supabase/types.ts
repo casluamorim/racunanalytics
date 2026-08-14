@@ -364,6 +364,7 @@ export type Database = {
           last_sync_at: string | null
           platform: Database["public"]["Enums"]["ad_platform"] | null
           status: Database["public"]["Enums"]["connection_status"] | null
+          token_expires_at: string | null
           updated_at: string | null
         }
         Insert: {
@@ -375,6 +376,7 @@ export type Database = {
           last_sync_at?: string | null
           platform?: Database["public"]["Enums"]["ad_platform"] | null
           status?: Database["public"]["Enums"]["connection_status"] | null
+          token_expires_at?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -386,6 +388,7 @@ export type Database = {
           last_sync_at?: string | null
           platform?: Database["public"]["Enums"]["ad_platform"] | null
           status?: Database["public"]["Enums"]["connection_status"] | null
+          token_expires_at?: string | null
           updated_at?: string | null
         }
         Relationships: [
